@@ -1,4 +1,10 @@
-﻿create table company (
+﻿create database DemoOrm
+go
+
+use DemoOrm
+go
+
+create table company (
 id int identity(1,1) primary key,
 name nvarchar(100) not null,
 address nvarchar(100) null,
@@ -37,9 +43,9 @@ go
 insert into company (name, address, phone)
 values 
 ('Kaizen Force', 'Av. Principal 123', '123-4567'),
-('Kaizen Force', 'Av. Principal 123', '987-6543'),
-('Kaizen Force', 'Av. Principal 123', '864-2097'),
-('Kaizen Force', 'Av. Principal 123', '531-0856')
+('Microsoft Corp.', 'Av. Camino Real 456', '987-6543'),
+('Apple Company', 'Av. Benavides 789', '864-2097'),
+('Facebook Co.', 'Av. Pardo 035', '531-0856')
 go
 
 
@@ -60,7 +66,6 @@ values
 (3, 'Head Phones', 1, 300.00, 300.00),
 (4, 'Karpesky Antivirus', 2, 200.00, 400.00),
 (4, 'Monitor LG HD', 1, 600.00, 600.00),
-
 go
 
 
