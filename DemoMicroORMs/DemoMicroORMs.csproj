@@ -56,7 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dapper\" />
-    <Folder Include="DataBase\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DataBase\TextFile1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
