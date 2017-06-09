@@ -47,6 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dapper\InvoiceRepository.cs" />
+    <Compile Include="DataLayer\Entities\Company.cs" />
+    <Compile Include="DataLayer\Entities\Invoice.cs" />
+    <Compile Include="DataLayer\Entities\InvoiceDetail.cs" />
+    <Compile Include="DataLayer\Repository\ICompanyRepository.cs" />
+    <Compile Include="DataLayer\Repository\IInvoiceDetailRepository.cs" />
+    <Compile Include="DataLayer\Repository\IInvoiceRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -54,9 +61,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Dapper\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="DataBase\SetUpDataBase.txt" />
   </ItemGroup>

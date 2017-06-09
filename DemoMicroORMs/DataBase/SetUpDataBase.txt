@@ -65,7 +65,7 @@ values
 (3, 'Ipad', 1, 450.00, 450.00),
 (3, 'Head Phones', 1, 300.00, 300.00),
 (4, 'Karpesky Antivirus', 2, 200.00, 400.00),
-(4, 'Monitor LG HD', 1, 600.00, 600.00),
+(4, 'Monitor LG HD', 1, 600.00, 600.00)
 go
 
 
