@@ -1,5 +1,4 @@
-﻿
-namespace DemoMicroORMs.DataLayer.Entities
+﻿namespace DataLayer.Entities
 {
     public class Company
     {

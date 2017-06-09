@@ -8,8 +8,7 @@ create table company (
 id int identity(1,1) primary key,
 name nvarchar(100) not null,
 address nvarchar(100) null,
-phone nvarchar(10) null,
-status bit default 1
+phone nvarchar(10) null
 )
 go
 
@@ -20,8 +19,7 @@ companyid int foreign key references company(id),
 customer nvarchar(100) not null,
 ammount money not null,
 nroproducts int not null,
-datecreate datetime default getdate(),
-status bit default 1
+datecreate datetime default getdate()
 )
 go
 
@@ -32,8 +30,7 @@ productname nvarchar(50),
 quantity int,
 unitprice money,
 subtotal money,
-datecreate datetime default getdate(),
-status bit default 1
+datecreate datetime default getdate()
 )
 go
 

@@ -64,13 +64,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DemoMicroORMs\DemoMicroORMs.csproj">
-      <Project>{1E4E6E56-E586-41A7-9F23-CE996E110E83}</Project>
-      <Name>DemoMicroORMs</Name>
-    </ProjectReference>
+    <None Include="App.config" />
+    <None Include="InvoiceOrderTest.orderedtest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\..\DataLayer\DataLayer.csproj">
+      <Project>{2A766BD3-63CC-40B7-B032-E7DA1FA6506F}</Project>
+      <Name>DataLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace DemoMicroORMs.DataLayer.Entities
+namespace DataLayer.Entities
 {
     public class InvoiceDetail
     {
-
         int id { get; set; }
         int idInvoice { get; set; }
         string productname { get; set; }
