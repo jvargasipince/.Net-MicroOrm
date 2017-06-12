@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Dapper\InvoiceRepository.cs" />
     <Compile Include="Entities\Invoice.cs" />
     <Compile Include="Entities\InvoiceDetail.cs" />

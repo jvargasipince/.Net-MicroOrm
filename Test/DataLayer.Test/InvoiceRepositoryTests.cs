@@ -34,7 +34,7 @@ namespace DataLayer.Test
             var invoice = new Invoice
             {
                 nroinvoice = "I0005",
-                companyid = 1,
+                company = 1,
                 customer = "Jorge Vargas",
                 ammount = 380.75m,
                 nroproducts = 2,
