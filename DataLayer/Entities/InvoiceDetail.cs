@@ -1,17 +1,23 @@
-﻿using System;
-
-namespace DataLayer.Entities
+﻿namespace DataLayer.Entities
 {
     public class InvoiceDetail
     {
-        int id { get; set; }
-        int idInvoice { get; set; }
-        string productname { get; set; }
-        int quantity { get; set; }
-        decimal unitprice { get; set; }
-        decimal subtotal { get; set; }
-        DateTime datecreate { get; set; }
-        bool status { get; set; }
+        public int id { get; set; }
+        public int idInvoice { get; set; }
+        public string productname { get; set; }
+        public int quantity { get; set; }
+        public decimal unitprice { get; set; }
+        public decimal subtotal { get; set; }
+        public bool IsNew
+        {
+            get
+            {
+                return this.id == default(int);
+            }
+        }
+
+        public bool IsDeleted { get; set; }
+
 
     }
 }

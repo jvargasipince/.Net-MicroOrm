@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,7 +48,6 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Dapper\InvoiceRepository.cs" />
-    <Compile Include="Entities\Company.cs" />
     <Compile Include="Entities\Invoice.cs" />
     <Compile Include="Entities\InvoiceDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

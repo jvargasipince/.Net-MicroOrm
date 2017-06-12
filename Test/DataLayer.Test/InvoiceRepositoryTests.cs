@@ -38,8 +38,7 @@ namespace DataLayer.Test
                 customer = "Jorge Vargas",
                 ammount = 380.75m,
                 nroproducts = 2,
-                datecreate = DateTime.Now,
-                status = true
+                datecreate = DateTime.Now
             };
 
             //act
@@ -70,7 +69,6 @@ namespace DataLayer.Test
             invoice.ammount.Should().Be(380.75m);
             invoice.nroproducts.Should().Be(2);
             invoice.datecreate.Should().Be(DateTime.Now);
-            invoice.status.Should().Be(true);
         }
 
 

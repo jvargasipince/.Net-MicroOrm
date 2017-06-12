@@ -4,18 +4,10 @@ go
 use DemoOrm
 go
 
-create table company (
-id int identity(1,1) primary key,
-name nvarchar(100) not null,
-address nvarchar(100) null,
-phone nvarchar(10) null
-)
-go
-
-create table invoice (
+create table dbo.invoice (
 id int identity(1,1) primary key,
 nroinvoice char(5) not null,
-companyid int foreign key references company(id),
+company nvarchar(100) not null,
 customer nvarchar(100) not null,
 ammount money not null,
 nroproducts int not null,
@@ -23,38 +15,29 @@ datecreate datetime default getdate()
 )
 go
 
-create table invoiceDetail (
+create table dbo.invoiceDetail (
 id int identity(1,1) primary key,
 idInvoice int foreign key references invoice(id),
 productname nvarchar(50),
 quantity int,
 unitprice money,
-subtotal money,
-datecreate datetime default getdate()
+subtotal money
 )
 go
 
 
 --Insert Data
 
-insert into company (name, address, phone)
+
+insert into dbo.invoice (nroinvoice, company, customer, ammount, nroproducts)
 values 
-('Kaizen Force', 'Av. Principal 123', '123-4567'),
-('Microsoft Corp.', 'Av. Camino Real 456', '987-6543'),
-('Apple Company', 'Av. Benavides 789', '864-2097'),
-('Facebook Co.', 'Av. Pardo 035', '531-0856')
+('I0001', 'Kaizen Force', 'Jorge Vargas', 250.00, 2),
+('I0002', 'Microsoft Corp.', 'Bill Gates', 500.00, 1),
+('I0003', 'Apple Company', 'Steve Jobs', 750.00, 2),
+('I0004', 'Facebook Co.', 'Mark Zuckerberg', 1000.00, 3)
 go
 
-
-insert into invoice (nroinvoice, companyid, customer, ammount, nroproducts)
-values 
-('I0001', 1, 'Jorge Vargas', 250.00, 2),
-('I0002', 2, 'Bill Gates', 500.00, 1),
-('I0003', 3, 'Steve Jobs', 750.00, 2),
-('I0004', 4, 'Mark Zuckerberg', 1000.00, 3)
-go
-
-insert into invoiceDetail (idInvoice, productname, quantity, unitprice, subtotal)
+insert into dbo.invoiceDetail (idInvoice, productname, quantity, unitprice, subtotal)
 values 
 (1, 'Mouse Gamer', 1, 130.00, 130.00),
 (1, 'KeyBoard Gamer', 1, 120.00, 120.00),
@@ -66,3 +49,54 @@ values
 go
 
 
+--Create Stored Procedures
+
+create procedure dbo.GetFullInvoice
+@id int
+as
+BEGIN 
+
+	Select 
+		id,  
+		nroinvoice, 
+		company, 
+		customer, 
+		ammount, 
+		nroproducts, 
+		datecreate 
+	from 
+		dbo.invoice 
+	where Id = @Id;
+
+	Select 
+		id, 
+		productname, 
+		quantity, 
+		unitprice, 
+		subtotal 
+	from 
+		dbo.invoiceDetail 
+	where  
+	idInvoice = @Id;
+
+END
+go
+
+create procedure dbo.InsertInvoice
+@id int output,
+@nroinvoice char(5),
+@company nvarchar(100),
+@customer nvarchar(100),
+@ammount money,
+@nroproducts int
+as 
+BEGIN
+	insert into invoice 
+		(nroinvoice, company, customer, ammount, nroproducts)
+	values 
+		(@nroinvoice, @company, @customer, @ammount, @nroproducts);
+		
+	SET @id = CAST(scope_identity() as int)
+	
+END
+go

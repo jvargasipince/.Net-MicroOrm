@@ -1,12 +1,12 @@
 ﻿using Dapper;
 using DataLayer.Entities;
 using DataLayer.Repository;
-using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Transactions;
 
 namespace DataLayer.Dapper
 {
@@ -17,44 +17,136 @@ namespace DataLayer.Dapper
 
         public Invoice find(int id)
         {
-            throw new NotImplementedException();
+            string query = "Select id,  nroinvoice, companyid, customer, ammount, nroproducts, datecreate from invoice ";
+            query += "where Id = @Id ";
+            return this.db.Query<Invoice>(query, new { Id = id }).SingleOrDefault();
         }
 
         public Invoice Add(Invoice invoice)
         {
-            var sql = "insert into invoice (nroinvoice, companyid, customer, ammount, nroproducts) " +
-                       "values (@nroinvoice, @companyid, @customer, @ammount, @nroproducts); " +
-                        "Select cast(scope_identity() as int)";
+            //using dinamic parameter
+            var parameters = new DynamicParameters();
+            parameters.Add("@id", value: invoice.id, dbType: DbType.Int32, direction: ParameterDirection.InputOutput);
+            parameters.Add("@nroinvoice", value: invoice.nroinvoice);
+            parameters.Add("@company", value: invoice.company);
+            parameters.Add("@customer", value: invoice.customer);
+            parameters.Add("@ammount", value: invoice.ammount, dbType: DbType.Decimal);
+            parameters.Add("@nroproducts", value: invoice.nroproducts, dbType: DbType.Int32);
 
-            var id = this.db.Query<int>(sql, invoice).Single();
-            invoice.id = id;
+            var id = this.db.Query<int>("InsertInvoice", invoice, commandType: CommandType.StoredProcedure).Single();
+            invoice.id = parameters.Get<int>("@id");
             return invoice;
         }
 
 
         public List<Invoice> GetAll()
         {
-            return this.db.Query<Invoice>("Select id,  nroinvoice, companyid, customer, ammount, nroproducts, datecreate, status from invoice").ToList();
+            string query = "Select id, nroinvoice, companyid, customer, ammount, nroproducts, datecreate from invoice";
+            return this.db.Query<Invoice>(query).ToList();
         }
 
         public Invoice GetFullInvoice(int id)
         {
-            throw new NotImplementedException();
+            using (var multipleResults = this.db.QueryMultiple("GetFullInvoice", new { id }, commandType: CommandType.StoredProcedure))
+            {
+                var invoice = multipleResults.Read<Invoice>().SingleOrDefault();
+                var invoicedetails = multipleResults.Read<InvoiceDetail>().ToList();
+
+                if (invoice != null && invoicedetails != null)
+                {
+                    invoice.InvoiceDetails.AddRange(invoicedetails);
+                }
+
+                return invoice;
+
+            }
+
         }
 
         public void Remove(int id)
         {
-            throw new NotImplementedException();
+            this.db.Execute("DELETE FROM invoice where id = @id", new { id });
         }
 
         public void Save(Invoice invoice)
         {
-            throw new NotImplementedException();
+            using (var txScope = new TransactionScope())
+            {
+                if (invoice.IsNew)
+                {
+                    this.Add(invoice);
+                }
+                else
+                {
+                    this.Update(invoice);
+                }
+
+                foreach (var detail in invoice.InvoiceDetails.Where(d => !d.IsDeleted))
+                {
+                    detail.idInvoice = invoice.id;
+
+                    if (detail.IsNew)
+                    {
+                        this.Add(detail);
+                    }
+                    else
+                    {
+                        this.Update(detail);
+                    }
+                }
+
+                foreach (var detail in invoice.InvoiceDetails.Where(d => d.IsDeleted))
+                {
+                    this.db.Execute("DELETE FROM Addresses Where Id = @Id", new { detail.id });
+                }
+
+                txScope.Complete();
+
+            }
         }
 
         public Invoice Update(Invoice invoice)
         {
-            throw new NotImplementedException();
+            var sql = " UPDATE invoice " +
+                "SET    nroinvoice = @nroinvoice, " +
+                "       companyid = @nroinvoice, " +
+                "       customer = @nroinvoice, " +
+                "       ammount = @ammount, " +
+                "       nroproducts = @nroproducts " +
+                "WHERE id = @id ";
+
+            this.db.Execute(sql, invoice);
+
+            return invoice;
         }
+
+        #region Details
+
+        public InvoiceDetail Add(InvoiceDetail invoicedetail)
+        {
+            var sql = "insert into invoiceDetail (idInvoice, productname, quantity, unitprice, subtotal) " +
+                       "values (@idInvoice, @productname, @quantity, @unitprice, @subtotal); " +
+                        "Select cast(scope_identity() as int)";
+
+            var id = this.db.Query<int>(sql, invoicedetail).Single();
+            invoicedetail.id = id;
+            return invoicedetail;
+        }
+
+        public InvoiceDetail Update(InvoiceDetail invoice)
+        {
+            var sql = " UPDATE invoiceDetail " +
+                "SET    productname = @productname, " +
+                "       quantity = @quantity, " +
+                "       unitprice = @unitprice, " +
+                "       subtotal = @subtotal " +
+                "WHERE id = @id ";
+
+            this.db.Execute(sql, invoice);
+
+            return invoice;
+        }
+        #endregion
+
     }
 }
