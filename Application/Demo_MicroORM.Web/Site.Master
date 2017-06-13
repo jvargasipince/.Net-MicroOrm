@@ -46,7 +46,6 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" runat="server" href="http://www.kaizen-force.com" target="_blank">Kaizen-Force.com</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -66,7 +65,9 @@
             </asp:ContentPlaceHolder>
             <hr />
             <footer>
+                 <img width="200px" height="100px" src="Images/KF_Logo.png" alt="Kaizen Force"  /> 
                 <p>&copy; <%: DateTime.Now.Year %> - Kaizen Force</p>
+
             </footer>
         </div>
     </form>

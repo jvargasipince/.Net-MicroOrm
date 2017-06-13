@@ -1,12 +1,12 @@
-﻿using Dapper;
-using DataLayer.Entities;
-using DataLayer.Repository;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Transactions;
+using Dapper;
+using DataLayer.Entities;
+using DataLayer.Repository;
 
 namespace DataLayer.Dapper
 {
@@ -41,7 +41,7 @@ namespace DataLayer.Dapper
 
         public List<Invoice> GetAll()
         {
-            string query = "Select id, nroinvoice, companyid, customer, ammount, nroproducts, datecreate from invoice";
+            string query = "Select id, nroinvoice, company, customer, ammount, nroproducts, datecreate from invoice";
             return this.db.Query<Invoice>(query).ToList();
         }
 
@@ -65,8 +65,10 @@ namespace DataLayer.Dapper
 
         public void Remove(int id)
         {
-            this.db.Execute("DELETE FROM invoice where id = @id", new { id });
+            this.db.Execute("DELETE FROM invoiceDetail where idInvoice = @id; DELETE FROM invoice where id = @id ", new { id });
         }
+
+
 
         public void Save(Invoice invoice)
         {
@@ -145,6 +147,11 @@ namespace DataLayer.Dapper
             this.db.Execute(sql, invoice);
 
             return invoice;
+        }
+
+        public void RemoveDetail(int id)
+        {
+            this.db.Execute("DELETE FROM invoiceDetail where id = @id", new { id });
         }
         #endregion
 

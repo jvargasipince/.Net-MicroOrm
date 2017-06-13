@@ -1,5 +1,5 @@
-﻿using DataLayer.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DataLayer.Entities;
 
 namespace DataLayer.Repository
 {
@@ -12,5 +12,6 @@ namespace DataLayer.Repository
         void Remove(int id);
         Invoice GetFullInvoice(int id);
         void Save(Invoice invoice);
+        void RemoveDetail(int id);
     }
 }

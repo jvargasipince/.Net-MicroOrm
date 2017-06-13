@@ -1,159 +1,128 @@
 ﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Demo_MicroORM.Web._Default" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-<script type="text/javascript">
-    
-    function checkSupport() {
 
-        //Validamos si Storage es soportado
-        if (typeof (Storage) !== "undefined") {
-            $("#isSupport").val("True");
-        } else {
-            $("#isSupport").val("False");
-        }
-    }
+    <div class="row">
+        <div class="col-md-6">  
+                <h2>Lista Facturas</h2>
+                    <asp:HiddenField id="hdIdFactura" runat="server"></asp:HiddenField>
+                <asp:GridView ID="gvFacturas" runat="server" AutoGenerateColumns="false" 
+                    DataKeyNames="id" OnRowCommand="gvFacturas_RowCommand" OnRowDeleting="gvFacturas_RowDeleting"
+                    OnRowEditing="gvFacturas_RowEditing">
 
+                     <Columns>  
+                        <asp:BoundField DataField="nroinvoice" HeaderText="Nro. Factura" />  
+                        <asp:BoundField DataField="company" HeaderText="Compañia" />  
+                        <asp:BoundField DataField="customer" HeaderText="Cliente" />  
+                        <asp:BoundField DataField="ammount" HeaderText="Total" />  
+                         <asp:BoundField DataField="nroproducts" HeaderText="Cant. Productos" />  
+                         <asp:TemplateField>
+                        <ItemTemplate>
+                                <asp:ImageButton ID="btnDetail" CommandName="view" CommandArgument='<%#Eval("id")%>'
+                                    runat="server" ImageUrl="~/Images/details.jpg" Width="18px" Height="18px" ToolTip="Ver Detalle" />
+                            </ItemTemplate>
+                            <ItemStyle Width="18px" HorizontalAlign="Center" />
+                        </asp:TemplateField>
+                          <asp:TemplateField>
+                        <ItemTemplate>
+                                <asp:ImageButton ID="btnEdit" CommandName="edit" CommandArgument='<%#Eval("id")%>'
+                                    runat="server" ImageUrl="~/Images/edit.png" Width="18px" Height="18px" ToolTip="Editar" />
+                            </ItemTemplate>
+                            <ItemStyle Width="18px" HorizontalAlign="Center" />
+                        </asp:TemplateField>
+                          <asp:TemplateField>
+                        <ItemTemplate>
+                                <asp:ImageButton ID="btnDelete" CommandName="delete" CommandArgument='<%#Eval("id")%>'
+                                    runat="server" ImageUrl="~/Images/delete.png" Width="18px" Height="18px" ToolTip="Eliminar" />
+                            </ItemTemplate>
+                            <ItemStyle Width="18px" HorizontalAlign="Center" />
+                        </asp:TemplateField>
 
-    function setLocalStorage() {
-        //Obtenemos el valor ingresado
-        var nombre = $("#setItem").val();
+                     </Columns>  
 
-        //Lo guardamos en el LocalStorage (key, value)
-        sessionStorage.setItem('nombre', nombre);
+                </asp:GridView>
+        </div>
+        <div class="col-md-6">  
+                <h2>Detalle</h2>
+                               
+                <asp:HiddenField id="hdIdDetalleFactura" runat="server"></asp:HiddenField>
+                <asp:GridView ID="gvDetalle" runat="server" AutoGenerateColumns="false"
+                     DataKeyNames="id" OnRowCommand="gvDetalle_RowCommand" OnRowDeleting="gvDetalle_RowDeleting">
+     
+                    
+                     <Columns>  
+                        <asp:BoundField DataField="productname" HeaderText="Producto" />  
+                        <asp:BoundField DataField="quantity" HeaderText="Cantidad" />  
+                        <asp:BoundField DataField="unitprice" HeaderText="Precio Unitario" />  
+                        <asp:BoundField DataField="subtotal" HeaderText="Sub Total" />  
+                          <asp:TemplateField>
+                        <ItemTemplate>
+                                <asp:ImageButton ID="btnDelete" CommandName="delete" CommandArgument='<%#Eval("id")%>'
+                                    runat="server" ImageUrl="~/Images/delete.png" Width="18px" Height="18px" ToolTip="Eliminar" />
+                            </ItemTemplate>
+                            <ItemStyle Width="18px" HorizontalAlign="Center" />
+                        </asp:TemplateField>
 
-        //Limpiamos Texto
-        $("#setItem").val('');
-    }
+                     </Columns>  
 
-    function getLocalStorage() {
-        //Obtenemos el valor registrado en el LocalStorage por su Key
-        var nombre = localStorage.getItem('nombre');
+                </asp:GridView>
+        </div>
 
-        //Seteamos dicho valor al textBox       
-        $("#getItem").val(nombre);
-    }
-
-    function filtrarNombres() {
-
-        //Limpiamos el TextBox que recibe la lista
-        $('#listaAlumnos').val('');
-
-        //Obtenemos el valor ingresado y lo convertimos a minusculas
-        var filtro = $("#filter").val().toLowerCase();
-
-        //Obtenemos la lista de los nombres registrados en el LocalStorage         
-        var listaAlumnos = JSON.parse(localStorage.getItem('listaNombres'));
-
-        //Recorremos esa lista y validamos que contenga el texto ingresado como filtro
-        listaAlumnos.forEach(function (nombre) { 
-            if (nombre.toLowerCase().indexOf(filtro) > -1) {
-                //Si existe, lo agregamos al TextBox filtrado
-                agregarNombre(nombre);
-            }                   
-        });
-
-        $("#filter").focus();
-
-    }
-
-    function cargarNombres() {
-
-        //Limpiamos valores de filtro y Lista de Nombres
-        $("#filter").val('');
-        $('#listaAlumnos').val('');
-
-        //Capturamos una lista existente, en caso haya sido precargada
-        var listaAlumnos = JSON.parse(localStorage.getItem('listaNombres'));
-
-        //En caso no exista, se inicializa la lista con valores por defecto
-        if (listaAlumnos == null) {
-            var listaNombres = ["Juan", "Pedro", "Jorge", "Miguel", "Manuel", "Alex", "Jose"];
-
-            //Seteamos el array
-            localStorage.setItem('listaNombres', JSON.stringify(listaNombres));
-        }
-        
-        //Obtener el array registrado en el LocalStorage 
-        var listaAlumnos = JSON.parse(localStorage.getItem('listaNombres'));
-       
-        //Recorremos esa lista y lo agregamos en nuestro TextBox
-        listaAlumnos.forEach(function (nombre) {
-            agregarNombre(nombre);
-        });
-
-        //Seteamos el foco
-        $("#filter").focus();
-
-    }
-
-    function agregarNombre(nombre) {
-        //Lo ponemos en el lista con salto de linea
-        $('#listaAlumnos').val($('#listaAlumnos').val() + nombre + '\n');
-    }
-
-    function agregarAlumno() {
-        //Obtiene nuevo nombre
-        var alumno = $("#nombreAlumno").val();
-        
-        //Obtener el array
-        var listaAlumnos = JSON.parse(localStorage.getItem('listaNombres'));
-
-        listaAlumnos.push(alumno);
-
-        //Seteamos el array
-        localStorage.setItem('listaNombres', JSON.stringify(listaAlumnos));
-
-        //Limpiamos el valor ingresado
-        $("#nombreAlumno").val('');
-
-        //Recargamos los nombres
-        cargarNombres();
-    }
-
-</script>
-
-    <div class="jumbotron">
-        <img width="700px" height="200px" src="Images/KF_Logo.png" alt="Kaizen Force"  /> 
 
     </div>
 
     <div class="row">
+        <asp:Button ID="btnNuevo" runat="server" Text="Nueva Factura" OnClick="btnNuevo_Click" />
         <div class="col-md-4">
-            <h2>Check Support</h2>
+            <h2>Invoice </h2> 
             <p>
-               ¿Is support? : <input type="text" id="isSupport" readonly style="width:75px" />
-                <a class="btn btn-default" onclick="checkSupport();">Check</a>
+               Nro. Factura: <asp:TextBox ID="txtNroInvoice" runat="server"></asp:TextBox>
+            </p>
+             <p>
+               Compañia: <asp:TextBox ID="txtCompany" runat="server"></asp:TextBox>
+            </p>
+            <p>
+               Cliente: <asp:TextBox ID="txtCustomer" runat="server"></asp:TextBox>
             </p>
         </div>
         <div class="col-md-4">
-            <h2>Set & Get</h2>
-            <p>
-               Ingresar Item : <input type="text" id="setItem" style="width:200px"/>             
-            </p>
+            <h2>Detalle</h2>
              <p>
-               Obtener Item : <input type="text" id="getItem" readonly style="width:200px"/>
+               Producto: <asp:TextBox ID="txtProducto" runat="server"></asp:TextBox>
+            </p>
+              <p>
+               Cantidad: <asp:TextBox ID="txtCantidad" runat="server"></asp:TextBox>
             </p>
             <p>
-                <a class="btn btn-default" onclick="setLocalStorage();">Guardar</a>
-                <a class="btn btn-default" onclick="getLocalStorage();">Obtener</a>
+               Precio Unitario: <asp:TextBox ID="txtPrecioUnitario" runat="server"></asp:TextBox>
+            </p>
+            <p>
+               <asp:Button ID="btnAgregarDetalle" runat="server" Text="Agregar" OnClick="btnAgregarDetalle_Click" />
+               <asp:Button ID="btnGuardar" runat="server" Text="Guardar" OnClick="btnGuardar_Click" />  
             </p>
         </div>
         <div class="col-md-4">
-            <h2>Filter : </h2>
-            <p>
-               Ingrese filtro : <input type="text" id="filter" onkeyup="filtrarNombres();" style="width:75px"/>    
-               <a class="btn btn-default" onclick="cargarNombres();">Cargar</a>         
-            </p>
-             <p>
-             <textarea id="listaAlumnos" name="textarea" style="width:250px;height:175px;"></textarea>
-            </p>
+           <asp:GridView ID="gvDetailSession" runat="server" AutoGenerateColumns="false"
+                     DataKeyNames="id" >
+                        
+                     <Columns>  
+                        <asp:BoundField DataField="productname" HeaderText="Producto" />  
+                        <asp:BoundField DataField="quantity" HeaderText="Cantidad" />  
+                        <asp:BoundField DataField="unitprice" HeaderText="Precio Unitario" />  
+                        <asp:BoundField DataField="subtotal" HeaderText="Sub Total" />  
+                          
+                        <asp:TemplateField>
+                        <ItemTemplate>
+                                <asp:ImageButton ID="btnDelete" CommandName="delete" CommandArgument='<%#Eval("id")%>'
+                                    runat="server" ImageUrl="~/Images/delete.png" Width="18px" Height="18px" ToolTip="Eliminar" />
+                            </ItemTemplate>
+                            <ItemStyle Width="18px" HorizontalAlign="Center" />
+                        </asp:TemplateField>
 
-             <p>
-               Nuevo Alumno : <input type="text" id="nombreAlumno" style="width:75px"/>    
-               <a class="btn btn-default" onclick="agregarAlumno();">Agregar</a>         
-            </p>
+                     </Columns>  
+
+                </asp:GridView>
         </div>
     </div>
-
 </asp:Content>
 

@@ -19,7 +19,7 @@ namespace DataLayer.Entities
         public int nroproducts { get; set; }
         public DateTime datecreate { get; set; }
 
-        public List<InvoiceDetail> InvoiceDetails { get; private set; }
+        public List<InvoiceDetail> InvoiceDetails { get; set; }
 
         public bool IsNew
         {
