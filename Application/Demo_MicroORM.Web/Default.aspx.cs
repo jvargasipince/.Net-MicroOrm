@@ -26,6 +26,13 @@ namespace Demo_MicroORM.Web
             List<Invoice> facturas = new List<Invoice>();
 
             facturas = repository.GetAll();
+
+            foreach (var factura in facturas)
+            {
+                factura.ammount = factura.InvoiceDetails.Select(x => x.subtotal).Sum();
+                factura.nroproducts = factura.InvoiceDetails.Select(x => x.quantity).Sum();
+            }
+
             gvFacturas.DataSource = facturas;
             gvFacturas.DataBind();
 
@@ -76,6 +83,8 @@ namespace Demo_MicroORM.Web
         protected void gvDetalle_RowDeleting(Object sender, GridViewDeleteEventArgs e)
         {
             CargarDetalleFacturas(Convert.ToInt32(hdIdFactura.Value));
+            CargarFacturas();
+
         }
 
 
@@ -90,6 +99,9 @@ namespace Demo_MicroORM.Web
             txtPrecioUnitario.Text = "";
 
             Session["DetalleFactura"] = null;
+            List<InvoiceDetail> listDetails = new List<InvoiceDetail>();
+            gvDetailSession.DataSource = listDetails;
+            gvDetailSession.DataBind();
             txtNroInvoice.Focus();
 
         }

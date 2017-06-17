@@ -30,8 +30,6 @@ namespace DataLayer.Dapper
             parameters.Add("@nroinvoice", value: invoice.nroinvoice);
             parameters.Add("@company", value: invoice.company);
             parameters.Add("@customer", value: invoice.customer);
-            parameters.Add("@ammount", value: invoice.ammount, dbType: DbType.Decimal);
-            parameters.Add("@nroproducts", value: invoice.nroproducts, dbType: DbType.Int32);
 
             var id = this.db.Execute("InsertInvoice", parameters, commandType: CommandType.StoredProcedure);
             invoice.id = parameters.Get<int>("@id");
@@ -41,8 +39,24 @@ namespace DataLayer.Dapper
 
         public List<Invoice> GetAll()
         {
-            string query = "Select id, nroinvoice, company, customer, ammount, nroproducts, datecreate from invoice";
-            return this.db.Query<Invoice>(query).ToList();
+
+            string query = "Select id,  nroinvoice, company, customer, datecreate from dbo.invoice; " +
+                            "Select id, idInvoice, productname, quantity, unitprice, subtotal from dbo.invoiceDetail; ";
+
+            using (var multipleResults = this.db.QueryMultiple(query))
+            {
+                var invoices = multipleResults.Read<Invoice>().ToList();
+                var invoicedetails = multipleResults.Read<InvoiceDetail>().ToList();
+
+                foreach (var invoice in invoices)
+                {
+                    invoice.InvoiceDetails.AddRange(invoicedetails.Where(x => x.idInvoice == invoice.id).ToList());
+                }
+
+                return invoices;
+
+            }
+
         }
 
         public Invoice GetFullInvoice(int id)
@@ -92,9 +106,7 @@ namespace DataLayer.Dapper
             var sql = " UPDATE invoice " +
                 "SET    nroinvoice = @nroinvoice, " +
                 "       companyid = @nroinvoice, " +
-                "       customer = @nroinvoice, " +
-                "       ammount = @ammount, " +
-                "       nroproducts = @nroproducts " +
+                "       customer = @nroinvoice " +
                 "WHERE id = @id ";
 
             this.db.Execute(sql, invoice);

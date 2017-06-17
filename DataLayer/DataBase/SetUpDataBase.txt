@@ -9,8 +9,6 @@ id int identity(1,1) primary key,
 nroinvoice char(5) not null,
 company nvarchar(100) not null,
 customer nvarchar(100) not null,
-ammount money not null,
-nroproducts int not null,
 datecreate datetime default getdate()
 )
 go
@@ -29,12 +27,12 @@ go
 --Insert Data
 
 
-insert into dbo.invoice (nroinvoice, company, customer, ammount, nroproducts)
+insert into dbo.invoice (nroinvoice, company, customer)
 values 
-('I0001', 'Kaizen Force', 'Jorge Vargas', 250.00, 2),
-('I0002', 'Microsoft Corp.', 'Bill Gates', 500.00, 1),
-('I0003', 'Apple Company', 'Steve Jobs', 750.00, 2),
-('I0004', 'Facebook Co.', 'Mark Zuckerberg', 1000.00, 3)
+('I0001', 'Kaizen Force', 'Jorge Vargas'),
+('I0002', 'Microsoft Corp.', 'Bill Gates'),
+('I0003', 'Apple Company', 'Steve Jobs'),
+('I0004', 'Facebook Co.', 'Mark Zuckerberg')
 go
 
 insert into dbo.invoiceDetail (idInvoice, productname, quantity, unitprice, subtotal)
@@ -61,8 +59,6 @@ BEGIN
 		nroinvoice, 
 		company, 
 		customer, 
-		ammount, 
-		nroproducts, 
 		datecreate 
 	from 
 		dbo.invoice 
@@ -86,15 +82,13 @@ create procedure dbo.InsertInvoice
 @id int output,
 @nroinvoice char(5),
 @company nvarchar(100),
-@customer nvarchar(100),
-@ammount money,
-@nroproducts int
+@customer nvarchar(100)
 as 
 BEGIN
 	insert into invoice 
-		(nroinvoice, company, customer, ammount, nroproducts)
+		(nroinvoice, company, customer)
 	values 
-		(@nroinvoice, @company, @customer, @ammount, @nroproducts);
+		(@nroinvoice, @company, @customer);
 		
 	SET @id = CAST(scope_identity() as int)
 	
