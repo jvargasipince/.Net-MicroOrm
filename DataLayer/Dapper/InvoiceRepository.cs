@@ -33,7 +33,7 @@ namespace DataLayer.Dapper
             parameters.Add("@ammount", value: invoice.ammount, dbType: DbType.Decimal);
             parameters.Add("@nroproducts", value: invoice.nroproducts, dbType: DbType.Int32);
 
-            var id = this.db.Query<int>("InsertInvoice", invoice, commandType: CommandType.StoredProcedure).Single();
+            var id = this.db.Execute("InsertInvoice", parameters, commandType: CommandType.StoredProcedure);
             invoice.id = parameters.Get<int>("@id");
             return invoice;
         }
@@ -74,32 +74,12 @@ namespace DataLayer.Dapper
         {
             using (var txScope = new TransactionScope())
             {
-                if (invoice.IsNew)
-                {
-                    this.Add(invoice);
-                }
-                else
-                {
-                    this.Update(invoice);
-                }
+                this.Add(invoice);                
 
-                foreach (var detail in invoice.InvoiceDetails.Where(d => !d.IsDeleted))
+                foreach (var detail in invoice.InvoiceDetails)
                 {
                     detail.idInvoice = invoice.id;
-
-                    if (detail.IsNew)
-                    {
-                        this.Add(detail);
-                    }
-                    else
-                    {
-                        this.Update(detail);
-                    }
-                }
-
-                foreach (var detail in invoice.InvoiceDetails.Where(d => d.IsDeleted))
-                {
-                    this.db.Execute("DELETE FROM Addresses Where Id = @Id", new { detail.id });
+                    this.Add(detail);
                 }
 
                 txScope.Complete();
@@ -135,24 +115,11 @@ namespace DataLayer.Dapper
             return invoicedetail;
         }
 
-        public InvoiceDetail Update(InvoiceDetail invoice)
-        {
-            var sql = " UPDATE invoiceDetail " +
-                "SET    productname = @productname, " +
-                "       quantity = @quantity, " +
-                "       unitprice = @unitprice, " +
-                "       subtotal = @subtotal " +
-                "WHERE id = @id ";
-
-            this.db.Execute(sql, invoice);
-
-            return invoice;
-        }
-
         public void RemoveDetail(int id)
         {
             this.db.Execute("DELETE FROM invoiceDetail where id = @id", new { id });
         }
+
         #endregion
 
     }

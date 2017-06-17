@@ -21,13 +21,5 @@ namespace DataLayer.Entities
 
         public List<InvoiceDetail> InvoiceDetails { get; set; }
 
-        public bool IsNew
-        {
-            get
-            {
-                return this.id == default(int);
-            }
-        }
-
     }
 }

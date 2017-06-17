@@ -7,8 +7,7 @@
                 <h2>Lista Facturas</h2>
                     <asp:HiddenField id="hdIdFactura" runat="server"></asp:HiddenField>
                 <asp:GridView ID="gvFacturas" runat="server" AutoGenerateColumns="false" 
-                    DataKeyNames="id" OnRowCommand="gvFacturas_RowCommand" OnRowDeleting="gvFacturas_RowDeleting"
-                    OnRowEditing="gvFacturas_RowEditing">
+                    DataKeyNames="id" OnRowCommand="gvFacturas_RowCommand" OnRowDeleting="gvFacturas_RowDeleting">
 
                      <Columns>  
                         <asp:BoundField DataField="nroinvoice" HeaderText="Nro. Factura" />  
@@ -20,13 +19,6 @@
                         <ItemTemplate>
                                 <asp:ImageButton ID="btnDetail" CommandName="view" CommandArgument='<%#Eval("id")%>'
                                     runat="server" ImageUrl="~/Images/details.jpg" Width="18px" Height="18px" ToolTip="Ver Detalle" />
-                            </ItemTemplate>
-                            <ItemStyle Width="18px" HorizontalAlign="Center" />
-                        </asp:TemplateField>
-                          <asp:TemplateField>
-                        <ItemTemplate>
-                                <asp:ImageButton ID="btnEdit" CommandName="edit" CommandArgument='<%#Eval("id")%>'
-                                    runat="server" ImageUrl="~/Images/edit.png" Width="18px" Height="18px" ToolTip="Editar" />
                             </ItemTemplate>
                             <ItemStyle Width="18px" HorizontalAlign="Center" />
                         </asp:TemplateField>

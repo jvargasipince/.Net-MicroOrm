@@ -49,12 +49,6 @@ namespace Demo_MicroORM.Web
             if (e.CommandName == "view")
                 CargarDetalleFacturas(id);
 
-            if (e.CommandName == "edit")
-            {
-                Invoice Factura = repository.GetFullInvoice(id);
-                LoadFacturaEdit(Factura);
-            }
-
             if (e.CommandName == "delete")
                 repository.Remove(id);
 
@@ -68,13 +62,6 @@ namespace Demo_MicroORM.Web
             int idInvoice = Int32.Parse(hdIdFactura.Value);
             hdIdDetalleFactura.Value = idDetail.ToString();
 
-            if (e.CommandName == "edit")
-            {
-                InvoiceDetail detalle = repository.GetFullInvoice(idInvoice).InvoiceDetails
-                                        .Where(f => f.id == idDetail).SingleOrDefault();
-                LoadFacturaDetalleEdit(detalle);
-            }
-
             if (e.CommandName == "delete")
                 repository.RemoveDetail(idDetail);
             
@@ -83,14 +70,6 @@ namespace Demo_MicroORM.Web
         protected void gvFacturas_RowDeleting(Object sender, GridViewDeleteEventArgs e)
         {
             CargarFacturas();
-        }
-
-
-        protected void gvFacturas_RowEditing(Object sender, GridViewEditEventArgs e)
-        {
-            //int idInvoice = Int32.Parse(hdIdFactura.Value);
-            //Invoice Factura = repository.GetFullInvoice(idInvoice);
-            //LoadFacturaEdit(Factura);
         }
 
 
@@ -111,6 +90,7 @@ namespace Demo_MicroORM.Web
             txtPrecioUnitario.Text = "";
 
             Session["DetalleFactura"] = null;
+            txtNroInvoice.Focus();
 
         }
 
@@ -137,6 +117,12 @@ namespace Demo_MicroORM.Web
             Session["DetalleFactura"] = listDetails;
             gvDetailSession.DataSource = listDetails;
             gvDetailSession.DataBind();
+
+            txtProducto.Text = "";
+            txtCantidad.Text = "";
+            txtPrecioUnitario.Text = "";
+
+            txtProducto.Focus();
         }
 
         void LoadFacturaEdit(Invoice invoice)
@@ -163,10 +149,13 @@ namespace Demo_MicroORM.Web
             factura.nroinvoice = txtNroInvoice.Text;
             factura.company = txtCompany.Text;
             factura.customer = txtCustomer.Text;
+            factura.ammount = listDetails.Select(x => x.subtotal).Sum();
+            factura.nroproducts = listDetails.Select(x => x.quantity).Sum();
             factura.InvoiceDetails = listDetails;
 
             repository.Save(factura);
             CargarFacturas();
+            limpiar();
         }
     }
 }
