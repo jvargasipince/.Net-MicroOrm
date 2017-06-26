@@ -8,11 +8,10 @@ namespace DataLayer.Massive
 
         //Complete Dynamic            
 
-
         public dynamic Find(int id)
         {
             dynamic table = new Invoices();
-            return table.GetContact(Id: id);
+            return table.GetInvoice(Id: id);
 
             //var table = new Invoices();
             //return table.Single(key: id);
@@ -31,20 +30,20 @@ namespace DataLayer.Massive
             return table.Query("select id, nroinvoice, company, customer, datecreate from invoice").ToList();
 
         }
-        public dynamic Add(dynamic contact)
+        public dynamic Add(dynamic invoice)
         {
             var table = new Invoices();
-            var addedInvoice = table.Insert(contact);
+            var addedInvoice = table.Insert(invoice);
 
             return addedInvoice;
         }
 
-        public dynamic Update(dynamic contact)
+        public dynamic Update(dynamic invoice)
         {
             var table = new Invoices();
-            table.Update(contact, contact.Id);
+            table.Update(invoice, invoice.Id);
 
-            return contact;
+            return invoice;
 
         }
         public void Remove(int id)
