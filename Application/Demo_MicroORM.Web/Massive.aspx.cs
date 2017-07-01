@@ -114,8 +114,8 @@ namespace Demo_MicroORM.Web
 
         protected void gvDetalle_RowDeleting(Object sender, GridViewDeleteEventArgs e)
         {
-            CargarDetalleFacturas(Convert.ToInt32(hdIdFactura.Value));
-            //CargarFacturas();
+            CargarFacturas();
+            CargarDetalleFacturas(Convert.ToInt32(hdIdFactura.Value));           
         }
 
         void limpiar()
