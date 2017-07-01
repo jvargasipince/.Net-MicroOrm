@@ -34,6 +34,7 @@
 
                 </asp:GridView>
         </div>
+
         <div class="col-md-6">  
                 <h2>Detalle</h2>
                                

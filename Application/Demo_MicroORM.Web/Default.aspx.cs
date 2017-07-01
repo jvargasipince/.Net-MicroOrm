@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using DataLayer.Dapper;
 using DataLayer.Entities;
-using DataLayer.Repository;
+using DataLayer.Massive;
 
 namespace Demo_MicroORM.Web
 {
     public partial class _Default : Page
     {
-        IInvoiceRepository repository = new InvoiceRepository();
+        InvoiceRepository repository = new InvoiceRepository();
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.IsPostBack)
@@ -23,12 +22,35 @@ namespace Demo_MicroORM.Web
         void CargarFacturas()
         {
 
+            List<dynamic> facturasConDetalle = new List<dynamic>();
             List<Invoice> facturas = new List<Invoice>();
+            List<InvoiceDetail> detalleFacturas = new List<InvoiceDetail>();
+            facturasConDetalle = repository.GetAllInvoicesAndDetails();
 
-            facturas = repository.GetAll();
+            facturas = repository.GetAllInvoices().Select(x => new Invoice {
+                id = x.id,
+                nroinvoice = x.nroinvoice,
+                company = x.company,
+                customer = x.customer,
+                datecreate = x.datecreate,
+            }).ToList();
 
+            detalleFacturas = repository.GetAllInvoicesDetails().Select(x => new InvoiceDetail
+            {
+                id = x.id,
+                idInvoice = x.idInvoice,
+                productname = x.productname,
+                quantity = x.quantity,
+                unitprice = x.unitprice,
+                subtotal = x.subtotal
+            }).ToList();
+
+
+            //Agregamos detalle a la Lista            
             foreach (var factura in facturas)
             {
+                factura.InvoiceDetails.AddRange(detalleFacturas.Where(x => x.idInvoice == factura.id).ToList());
+
                 factura.ammount = factura.InvoiceDetails.Select(x => x.subtotal).Sum();
                 factura.nroproducts = factura.InvoiceDetails.Select(x => x.quantity).Sum();
             }
@@ -42,9 +64,20 @@ namespace Demo_MicroORM.Web
 
         void CargarDetalleFacturas(int id)
         {
-            List<InvoiceDetail> detalleFactures = repository.GetFullInvoice(id).InvoiceDetails;
+            List<InvoiceDetail> detalleFacturas = new List<InvoiceDetail>();
 
-            gvDetalle.DataSource = detalleFactures;
+            detalleFacturas = repository.GetAllInvoicesDetailsById(id).Select(x => new InvoiceDetail
+            {
+                id = x.id,
+                idInvoice = x.idInvoice,
+                productname = x.productname,
+                quantity = x.quantity,
+                unitprice = x.unitprice,
+                subtotal = x.subtotal
+            })
+            .ToList();
+
+            gvDetalle.DataSource = detalleFacturas;
             gvDetalle.DataBind();
         }
 
@@ -71,7 +104,7 @@ namespace Demo_MicroORM.Web
 
             if (e.CommandName == "delete")
                 repository.RemoveDetail(idDetail);
-            
+
         }
 
         protected void gvFacturas_RowDeleting(Object sender, GridViewDeleteEventArgs e)
@@ -79,12 +112,10 @@ namespace Demo_MicroORM.Web
             CargarFacturas();
         }
 
-
         protected void gvDetalle_RowDeleting(Object sender, GridViewDeleteEventArgs e)
         {
             CargarDetalleFacturas(Convert.ToInt32(hdIdFactura.Value));
-            CargarFacturas();
-
+            //CargarFacturas();
         }
 
 
@@ -114,10 +145,10 @@ namespace Demo_MicroORM.Web
         protected void btnAgregarDetalle_Click(object sender, EventArgs e)
         {
             List<InvoiceDetail> listDetails = new List<InvoiceDetail>();
-            
+
             if (Session["DetalleFactura"] != null)
-               listDetails = (List<InvoiceDetail>)Session["DetalleFactura"];
-            
+                listDetails = (List<InvoiceDetail>)Session["DetalleFactura"];
+
             listDetails.Add(new InvoiceDetail
             {
                 productname = txtProducto.Text,

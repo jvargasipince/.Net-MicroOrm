@@ -105,8 +105,8 @@ namespace DataLayer.Dapper
         {
             var sql = " UPDATE invoice " +
                 "SET    nroinvoice = @nroinvoice, " +
-                "       companyid = @nroinvoice, " +
-                "       customer = @nroinvoice " +
+                "       companyid = @companyid, " +
+                "       customer = @customer " +
                 "WHERE id = @id ";
 
             this.db.Execute(sql, invoice);
